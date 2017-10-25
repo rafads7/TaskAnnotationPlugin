@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.embed.swing.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<!--<SplitPane fx:id="spV" dividerPositions="0.8223201174743024" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GUIController">-->
+<!--<items>-->
+<!--<AnchorPane>-->
+<!--<children>-->
+<!--<SplitPane fx:id="spH" dividerPositions="0.757537688442211" prefHeight="475.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">-->
+<!--<items>-->
+<!--<StackPane alignment="TOP_CENTER" prefHeight="555.0" prefWidth="600.0">-->
+<!--<children>-->
+<!--<SwingNode fx:id="swingNode">-->
+<!--<StackPane.margin>-->
+<!--<Insets left="10.0" />-->
+<!--</StackPane.margin>-->
+<!--</SwingNode>-->
+<!--</children>-->
+<!--</StackPane>-->
+<!--<TreeView fx:id="taskTreeView" prefHeight="200.0" prefWidth="200.0" />-->
+<!--</items>-->
+<!--</SplitPane>-->
+<!--</children>-->
+<!--</AnchorPane>-->
+<!--<AnchorPane fx:id="ap2" prefHeight="200.0" prefWidth="200.0">-->
+<!--<children>-->
+<!--<Label layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="97.0" text="Task Name" />-->
+<!--<TextField fx:id="taskName" layoutX="14.0" layoutY="26.0" prefHeight="25.0" prefWidth="178.0" />-->
+<!--<Label layoutX="14.0" layoutY="63.0" text="Position" />-->
+<!--<TextField fx:id="position" layoutX="14.0" layoutY="84.0" prefHeight="25.0" prefWidth="178.0" />-->
+<!--<Label layoutX="218.0" layoutY="6.0" text="Plan (optional)" />-->
+<!--<TextArea fx:id="plan" layoutX="218.0" layoutY="26.0" prefHeight="83.0" prefWidth="241.0" />-->
+<!--<Button fx:id="confirm" alignment="CENTER" contentDisplay="TOP" layoutX="470.0" layoutY="72.0" mnemonicParsing="false" onAction="#confirmButtonManagement" prefWidth="60.0" text="New" textFill="#18832e" />-->
+<!--<Button fx:id="delete" alignment="CENTER" disable="true" layoutX="538.0" layoutY="72.0" mnemonicParsing="false" prefWidth="60.0" text="Delete" textFill="RED" />-->
+<!--<Button fx:id="loggingUsability" disable="true" layoutX="606.0" layoutY="72.0" mnemonicParsing="false" prefWidth="60.0" text="Logging" textFill="BLUE" />-->
+<!--<Button fx:id="exportTask" layoutX="470.0" layoutY="39.0" mnemonicParsing="false" onAction="#exportManagement" prefWidth="60.0" text="Export" />-->
+<!--<Button fx:id="importTask" layoutX="538.0" layoutY="39.0" mnemonicParsing="false" onAction="#importManagement" prefWidth="60.0" text="Import" />-->
+<!--<Button fx:id="help" layoutX="606.0" layoutY="39.0" mnemonicParsing="false" onAction="#helpManagement" prefWidth="60.0" text="Help" />-->
+<!--</children>-->
+<!--</AnchorPane>-->
+<!--</items>-->
+<!--</SplitPane>-->
+
+<SplitPane fx:id="spV" dividerPositions="0.8223201174743024" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GUIController">
+    <items>
+        <AnchorPane>
+            <children>
+                <SplitPane fx:id="spH" dividerPositions="0.757537688442211" prefHeight="475.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                        <ScrollPane>
+                            <content>
+                                <AnchorPane prefHeight="557.0" prefWidth="604.0">
+                                    <children>
+                                        <StackPane prefHeight="555.0" prefWidth="600.0" AnchorPane.bottomAnchor="-555.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-590.0" AnchorPane.topAnchor="0.0">
+                                            <children>
+                                                <SwingNode fx:id="swingNode">
+                                                    <StackPane.margin>
+                                                        <Insets left="10.0" />
+                                                    </StackPane.margin>
+                                                </SwingNode>
+                                            </children>
+                                        </StackPane>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </ScrollPane>
+                        <TreeView fx:id="taskTreeView" prefHeight="200.0" prefWidth="200.0" />
+                    </items>
+                </SplitPane>
+            </children>
+        </AnchorPane>
+        <AnchorPane fx:id="ap2" prefHeight="200.0" prefWidth="200.0">
+            <children>
+                <Label layoutX="14.0" layoutY="6.0" prefHeight="17.0" prefWidth="97.0" text="Task Name" />
+                <TextField fx:id="taskName" layoutX="14.0" layoutY="26.0" prefHeight="25.0" prefWidth="178.0" />
+                <Label layoutX="14.0" layoutY="63.0" text="Position" />
+                <TextField fx:id="position" layoutX="14.0" layoutY="84.0" prefHeight="25.0" prefWidth="178.0" />
+                <Label layoutX="218.0" layoutY="6.0" text="Plan (optional)" />
+                <TextArea fx:id="plan" layoutX="218.0" layoutY="26.0" prefHeight="83.0" prefWidth="241.0" />
+                <Button fx:id="confirm" alignment="CENTER" contentDisplay="TOP" layoutX="470.0" layoutY="72.0" mnemonicParsing="false" onAction="#confirmButtonManagement" prefWidth="60.0" text="New" textFill="#18832e" />
+                <Button fx:id="delete" alignment="CENTER" disable="true" layoutX="538.0" layoutY="72.0" mnemonicParsing="false" prefWidth="60.0" text="Delete" textFill="RED" />
+                <Button fx:id="loggingUsability" disable="true" layoutX="606.0" layoutY="72.0" mnemonicParsing="false" prefWidth="60.0" text="Logging" textFill="BLUE" />
+                <Button fx:id="exportTask" layoutX="470.0" layoutY="39.0" mnemonicParsing="false" onAction="#exportManagement" prefWidth="60.0" text="Export" />
+                <Button fx:id="importTask" layoutX="538.0" layoutY="39.0" mnemonicParsing="false" onAction="#importManagement" prefWidth="60.0" text="Import" />
+                <Button fx:id="help" layoutX="606.0" layoutY="39.0" mnemonicParsing="false" onAction="#helpManagement" prefWidth="60.0" text="Help" />
+            </children>
+        </AnchorPane>
+    </items>
+</SplitPane>
