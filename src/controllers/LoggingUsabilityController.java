@@ -1,7 +1,6 @@
 package controllers;
 
-import beans.DiagramTask;
-import com.sun.demo.jvmti.hprof.Tracker;
+import models.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -9,19 +8,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.Clipboard;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LoggingUsabilityController implements Initializable{
 
-    private DiagramTask task;
+    private Task task;
     private Stage window;
     private JFrame mainAppWindow;
     @FXML private Button saveButton;
@@ -37,31 +33,31 @@ public class LoggingUsabilityController implements Initializable{
     }
 
     //Task and Stage getter for proper task control
-    public void setTaskAndStages(DiagramTask task, Stage window, JFrame mainAppWindow) {
+    public void setTaskAndStages(Task task, Stage window, JFrame mainAppWindow) {
         this.task = task;
         this.window = window;
         this.mainAppWindow = mainAppWindow;
 
-        if(task.getUsabilityLoggingDescription() != null){
-            usabilityTextArea.setText(task.getUsabilityLoggingDescription());
+        if(task.getLoggingElement().getDescription() != null){
+            usabilityTextArea.setText(task.getLoggingElement().getDescription());
         }
-        if(task.getReferences().get("Tracker") != null){
-            trackerReference.setText(task.getReferences().get("Tracker"));
+        if(task.getLoggingElement().getReferences().get("Tracker") != null){
+            trackerReference.setText(task.getLoggingElement().getReferences().get("Tracker"));
         }
-        if(task.getReferences().get("Dimensions") != null){
-            dimensionsReference.setText(task.getReferences().get("Dimensions"));
+        if(task.getLoggingElement().getReferences().get("Dimensions") != null){
+            dimensionsReference.setText(task.getLoggingElement().getReferences().get("Dimensions"));
         }
-        if(task.getReferences().get("Events") != null){
-            eventsReference.setText(task.getReferences().get("Events"));
+        if(task.getLoggingElement().getReferences().get("Events") != null){
+            eventsReference.setText(task.getLoggingElement().getReferences().get("Events"));
         }
-        if(task.getReferences().get("Screens") != null){
-            screensReference.setText(task.getReferences().get("Screens"));
+        if(task.getLoggingElement().getReferences().get("Screens") != null){
+            screensReference.setText(task.getLoggingElement().getReferences().get("Screens"));
         }
-        if(task.getReferences().get("UserID") != null){
-            userIDReference.setText(task.getReferences().get("UserID"));
+        if(task.getLoggingElement().getReferences().get("UserID") != null){
+            userIDReference.setText(task.getLoggingElement().getReferences().get("UserID"));
         }
-        if(task.getReferences().get("UserTiming") != null){
-            userTimingReference.setText(task.getReferences().get("UserTiming"));
+        if(task.getLoggingElement().getReferences().get("UserTiming") != null){
+            userTimingReference.setText(task.getLoggingElement().getReferences().get("UserTiming"));
         }
     }
 
@@ -70,28 +66,28 @@ public class LoggingUsabilityController implements Initializable{
         saveButton.setOnMouseClicked( new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+
                 if (usabilityTextArea.getText() != null){
-                    task.setUsabilityLoggingDescription( usabilityTextArea.getText() );
+                    task.setLoggingElementDescription( usabilityTextArea.getText() );
                 }
                 if(trackerReference.getText() != null){
-                    task.getReferences().put("Tracker", trackerReference.getText());
+                    task.setLoggingReference("Tracker", trackerReference.getText());
                 }
                 if(dimensionsReference.getText() != null){
-                    task.getReferences().put("Dimensions", dimensionsReference.getText());
+                    task.setLoggingReference("Dimensions", dimensionsReference.getText());
                 }
                 if(eventsReference.getText() != null){
-                    task.getReferences().put("Events", eventsReference.getText());
+                    task.setLoggingReference("Events", eventsReference.getText());
                 }
                 if(screensReference.getText() != null){
-                    task.getReferences().put("Screens", screensReference.getText());
+                    task.setLoggingReference("Screens", screensReference.getText());
                 }
                 if(userIDReference.getText() != null){
-                    task.getReferences().put("UserID", userIDReference.getText());
+                    task.setLoggingReference("UserID", userIDReference.getText());
                 }
                 if(userTimingReference.getText() != null){
-                    task.getReferences().put("UserTiming", userTimingReference.getText());
+                    task.setLoggingReference("UserTiming", userTimingReference.getText());
                 }
-
                 window.close();
             }
         } );

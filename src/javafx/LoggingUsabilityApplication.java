@@ -1,6 +1,6 @@
 package javafx;
 
-import beans.DiagramTask;
+import models.Task;
 import controllers.LoggingUsabilityController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class LoggingUsabilityApplication extends Application {
 
-    private DiagramTask task;
+    private Task task;
     private AnchorPane rootLayout;
     private JFrame GUIWindow;
 
@@ -40,7 +40,7 @@ public class LoggingUsabilityApplication extends Application {
         stage.setResizable( false );
         stage.show();
     }
-    public void setTaskAndStage(DiagramTask task, JFrame mainWindow) {
+    public void setTaskAndStage(Task task, JFrame mainWindow) {
         this.task = task;
         this.GUIWindow = mainWindow;
     }

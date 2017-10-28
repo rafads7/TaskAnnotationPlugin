@@ -1,4 +1,4 @@
-package beans;
+package models;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -6,33 +6,33 @@ import javafx.scene.control.TextField;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class TaskGraph implements Serializable{
+public class Graph implements Serializable{
 
     private final String ROOT_POSITION = "0";
     private final String CREATED = "created";
     private final String NO_PARENT = "no_parent";
     private final String NO_ROOT = "no_root";
     private final String NO_PREVIOUS_SIBLING = "no_previous_sibling";
-    private HashMap<String, DiagramTask> tasks;
+    private HashMap<String, Task> tasks;
 
-    public TaskGraph() {
+    public Graph() {
         this.tasks = new HashMap<>();
     }
 
     //Getters
-    public HashMap<String, DiagramTask> getTasks() {
+    public HashMap<String, Task> getTasks() {
         return tasks;
     }
-    public DiagramTask getRootTask() {
+    public Task getRootTask() {
         return this.tasks.get("0");
     }
-    public DiagramTask getTaskByPosition(String pos) {
+    public Task getTaskByPosition(String pos) {
         return this.tasks.get(pos);
     }
 
     //Task Creation
     public String addNewTaskToDiagram(TextField taskName, TextField position, TextArea plan) {
-        DiagramTask task = new DiagramTask(taskName.getText(), position.getText(), plan.getText());
+        Task task = new Task(taskName.getText(), position.getText(), plan.getText());
         if (taskAlreadyExists(task.getPosition())) {
             if(utils.Utils.showWarningCheck("Creation",  task.toString())){
                 createNewTaskAndUpdateExistingTasks(task);
@@ -57,16 +57,16 @@ public class TaskGraph implements Serializable{
             return CREATED;
         }
     }
-    private void createNewTaskAndUpdateExistingTasks(DiagramTask newTask) {
+    private void createNewTaskAndUpdateExistingTasks(Task newTask) {
 
         if(newTask.getPosition().equals("0")){
             utils.Utils.showWarningMessage("Error: you cannot create a new root.");
         }else{
-            DiagramTask old = this.tasks.get(newTask.getPosition());
+            Task old = this.tasks.get(newTask.getPosition());
             int newTaskPosLastLevel = Integer.valueOf(newTask.getPosition().substring(newTask.getPosition().length()-1));
             int currentTaskPosLastLevel;
 
-            for(DiagramTask t : old.getParent().getSubtasks()){
+            for(Task t : old.getParent().getSubtasks()){
                 currentTaskPosLastLevel = Integer.valueOf(t.getPosition().substring(t.getPosition().length()-1));
                 if(newTaskPosLastLevel <= currentTaskPosLastLevel){
                     if(t.getPosition().length() == 1){
@@ -84,10 +84,10 @@ public class TaskGraph implements Serializable{
             updateGraph(old.getParent());
         }
     }
-    private void updateExistingSubtasks(DiagramTask parent){
+    private void updateExistingSubtasks(Task parent){
         String aux1, aux2, aux3;
         int parentPosLength = parent.getPosition().length();
-        for(DiagramTask t: parent.getSubtasks()){
+        for(Task t: parent.getSubtasks()){
             aux1 = t.getPosition().substring(parentPosLength);
             t.setPosition(parent.getPosition() + aux1);
             if(t.hasSubtasks()){
@@ -95,8 +95,8 @@ public class TaskGraph implements Serializable{
             }
         }
     }
-    private void updateGraph(DiagramTask parent){
-        for(DiagramTask t: parent.getSubtasks()){
+    private void updateGraph(Task parent){
+        for(Task t: parent.getSubtasks()){
             this.tasks.put(t.getPosition(), t);
             if(t.hasSubtasks()){
                 updateGraph(t);
@@ -108,7 +108,7 @@ public class TaskGraph implements Serializable{
     private boolean rootExistence() {
         return this.tasks.containsKey("0");
     }
-    private boolean hasPreviousSibling(DiagramTask task) {
+    private boolean hasPreviousSibling(Task task) {
         String position = task.getPosition().substring(task.getPosition().length() - 1);
         if (task.getParent().getSubtasks().size() < Integer.valueOf(position) - 1) {
             return false;
@@ -128,7 +128,7 @@ public class TaskGraph implements Serializable{
         }
         return false;
     }
-    private boolean setParent(DiagramTask task) {
+    private boolean setParent(Task task) {
 
         if (task.getPosition().length() == 1) {
             task.setParent(this.tasks.get("0"));
@@ -147,7 +147,7 @@ public class TaskGraph implements Serializable{
     }
 
     //Task Elimination
-    public void deleteTask(DiagramTask task) {
+    public void deleteTask(Task task) {
         if (this.getRootTask().equals(task)) {
             this.tasks.clear();
         }else{
@@ -159,8 +159,8 @@ public class TaskGraph implements Serializable{
             moveFollowingTasks(task);
         }
     }
-    private void deleteSubtasks(DiagramTask task) {
-        for (DiagramTask subT : task.getSubtasks()) {
+    private void deleteSubtasks(Task task) {
+        for (Task subT : task.getSubtasks()) {
             if (subT.hasSubtasks()) {
                 deleteSubtasks(subT);
             }
@@ -170,12 +170,12 @@ public class TaskGraph implements Serializable{
     }
 
     //Graph Update
-    private void moveFollowingTasks(DiagramTask removedTask) {
-        DiagramTask parent = removedTask.getParent();
+    private void moveFollowingTasks(Task removedTask) {
+        Task parent = removedTask.getParent();
         parent.getSubtasks().remove(removedTask);
         String currentTaskPos, aux1, aux2;
         int aux3, parentPosLenghtToCompare = parent.getPosition().length();
-        for (DiagramTask t : parent.getSubtasks()) {
+        for (Task t : parent.getSubtasks()) {
             if (isNotAPreviousTask(removedTask.getPosition(), t.getPosition())) {
                 currentTaskPos = t.getPosition();
                 if(currentTaskPos.length() == 1){
@@ -195,11 +195,11 @@ public class TaskGraph implements Serializable{
             }
         }
     }
-    private void moveFollowingSubTasks(DiagramTask parent) {
+    private void moveFollowingSubTasks(Task parent) {
         String currentTaskPos, aux1, aux2, aux4;
         int aux3, parentPosLenghtToCompare = parent.getPosition().length();
 
-        for (DiagramTask t : parent.getSubtasks()) {
+        for (Task t : parent.getSubtasks()) {
             currentTaskPos = t.getPosition();
 
             aux1 = currentTaskPos.substring(0, parentPosLenghtToCompare-1);

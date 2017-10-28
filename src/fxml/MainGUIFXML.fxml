@@ -8,7 +8,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<!--<SplitPane fx:id="spV" dividerPositions="0.8223201174743024" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GUIController">-->
+<!--<SplitPane fx:id="spV" dividerPositions="0.8223201174743024" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainGUIControllerller">-->
 <!--<items>-->
 <!--<AnchorPane>-->
 <!--<children>-->
@@ -47,7 +47,7 @@
 <!--</items>-->
 <!--</SplitPane>-->
 
-<SplitPane fx:id="spV" dividerPositions="0.8223201174743024" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GUIController">
+<SplitPane fx:id="spV" dividerPositions="0.8223201174743024" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainGUIController">
     <items>
         <AnchorPane>
             <children>

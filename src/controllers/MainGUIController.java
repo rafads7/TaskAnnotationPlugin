@@ -1,7 +1,7 @@
 package controllers;
 
-import beans.DiagramTask;
-import beans.TaskGraph;
+import models.Task;
+import models.Graph;
 import javafx.LoggingUsabilityApplication;
 import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingNode;
@@ -11,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -29,21 +28,18 @@ import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class GUIController implements Initializable {
+public class MainGUIController implements Initializable {
 
-    @FXML
-    private javafx.scene.control.TextField taskName;
-    @FXML
-    private javafx.scene.control.TextField position;
-    @FXML
-    private TextArea plan;
-    public TreeView<DiagramTask> taskTreeView;
+    @FXML private TextField taskName, position;
+    @FXML private TextArea plan;
+    public TreeView<Task> taskTreeView;
     public SwingNode swingNode;
     public Button delete;
     public Button confirm;
     public Button loggingUsability;
 
-    private TaskGraph graph = new TaskGraph();
+    private Graph graph = new Graph();
+//    private LoggingUsabilityApplication loggingApplication = new LoggingUsabilityApplication();
     private JFrame window;
     private final String NO_PARENT = "no_parent";
     private final String NO_PREVIOUS_SIBLING = "no_previous_sibling";
@@ -98,7 +94,7 @@ public class GUIController implements Initializable {
         }
     }
     private void editTaskBehaviour() {
-        DiagramTask t = graph.getTaskByPosition(position.getText());
+        Task t = graph.getTaskByPosition(position.getText());
         t.setName(taskName.getText());
         t.setPlan(plan.getText());
         delete.setDisable(true);
@@ -107,10 +103,10 @@ public class GUIController implements Initializable {
         position.setDisable(false);
         updateControlGUI();
     }
-    private void deleteButtonManagement(TreeItem<DiagramTask> selectedItem) {
+    private void deleteButtonManagement(TreeItem<Task> selectedItem) {
         delete.setDisable(false);
         delete.setOnAction( (ActionEvent event) -> {
-            DiagramTask task = selectedItem.getValue();
+            Task task = selectedItem.getValue();
             if (utils.Utils.showWarningCheck("Delete", task.toString())) {
                 this.graph.deleteTask(task);
                 delete.setDisable(true);
@@ -121,13 +117,13 @@ public class GUIController implements Initializable {
             }
         });
     }
-    private void loggingButtonManagement(TreeItem<DiagramTask> selectedItem) {
+    private void loggingButtonManagement(TreeItem<Task> selectedItem) {
         loggingUsability.setDisable(false);
         loggingUsability.setOnAction( event -> {
-            DiagramTask task = selectedItem.getValue();
-            LoggingUsabilityApplication s = new LoggingUsabilityApplication();
-            s.setTaskAndStage(task, window);
-            s.start(new Stage());
+            Task task = selectedItem.getValue();
+            LoggingUsabilityApplication loggingApplication = new LoggingUsabilityApplication();
+            loggingApplication.setTaskAndStage(task, window);
+            loggingApplication.start(new Stage());
         } );
 
     }
@@ -165,11 +161,11 @@ public class GUIController implements Initializable {
     public void importManagement(ActionEvent actionEvent) {
         final FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(new Stage());
-        TaskGraph importedGraph;
+        Graph importedGraph;
         try {
             FileInputStream fileIn = new FileInputStream(file.getAbsolutePath());
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            importedGraph = (TaskGraph) in.readObject();
+            importedGraph = (Graph) in.readObject();
 
             if(importedGraph != null){
                 this.graph = importedGraph;
@@ -214,7 +210,6 @@ public class GUIController implements Initializable {
             // Create a panel that draws the nodes and edges and show the panel
             TaskBoxTreePane panel = new TaskBoxTreePane( treeLayout );
 
-            //swingNode.relocate(277.5, 5);
             swingNode.setVisible( true );
             swingNode.setContent( panel );
             swingNode.setVisible( true );
@@ -251,8 +246,8 @@ public class GUIController implements Initializable {
         if (graph.getTasks().size() == 0) {
             return null;
         } else {
-            DiagramTask tRoot = graph.getRootTask();
-            TaskBox root = new TaskBox(tRoot.toString2(), setWidth(tRoot), 40);
+            Task tRoot = graph.getRootTask();
+            TaskBox root = new TaskBox(tRoot.toString2(), setDiagramNodesWidth(tRoot), 40);
             DefaultTreeForTreeLayout<TaskBox> tree = new DefaultTreeForTreeLayout<TaskBox>(root);
 
             if(tRoot.hasSubtasks()){
@@ -261,18 +256,18 @@ public class GUIController implements Initializable {
             return tree;
         }
     }
-    private void createTreeSubtasks(DefaultTreeForTreeLayout<TaskBox> tree, TaskBox parent, DiagramTask task) {
+    private void createTreeSubtasks(DefaultTreeForTreeLayout<TaskBox> tree, TaskBox parent, Task task) {
         TaskBox sub;
 
-        for(DiagramTask t : task.getSubtasks()){
-            sub = new TaskBox(t.toString2(), setWidth( t ), 40);
+        for(Task t : task.getSubtasks()){
+            sub = new TaskBox(t.toString2(), setDiagramNodesWidth( t ), 40);
             tree.addChild(parent, sub);
             if(t.hasSubtasks()){
                 createTreeSubtasks(tree, sub, t);
             }
         }
     }
-    private int setWidth(DiagramTask t){
+    private int setDiagramNodesWidth(Task t){
         int posLength = Integer.valueOf(t.getPosition().length());
         int nameLength = Integer.valueOf(t.getName().length());
         if(posLength == 1 && nameLength == 1){
@@ -290,7 +285,7 @@ public class GUIController implements Initializable {
         if (graph.getTasks().size() == 0) {
             taskTreeView.setRoot(null);
         } else {
-            TreeItem<DiagramTask> root = new TreeItem<>(graph.getRootTask());
+            TreeItem<Task> root = new TreeItem<>(graph.getRootTask());
             root.setExpanded(true);
             if (root.getValue().hasSubtasks()) {
                 updateTreeViewSubtasks(root);
@@ -299,9 +294,9 @@ public class GUIController implements Initializable {
             setItemBehaviour();
         }
     }
-    private void updateTreeViewSubtasks(TreeItem<DiagramTask> treeParentItem) {
-        for (DiagramTask t : treeParentItem.getValue().getSubtasks()) {
-            TreeItem<DiagramTask> item = new TreeItem<>(t);
+    private void updateTreeViewSubtasks(TreeItem<Task> treeParentItem) {
+        for (Task t : treeParentItem.getValue().getSubtasks()) {
+            TreeItem<Task> item = new TreeItem<>(t);
             treeParentItem.getChildren().add(item);
             item.setExpanded(true);
             if (t.hasSubtasks()) {
@@ -311,7 +306,7 @@ public class GUIController implements Initializable {
     }
     private void setItemBehaviour() {
         taskTreeView.getSelectionModel().selectedItemProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
-            TreeItem<DiagramTask> selectedItem = (TreeItem<DiagramTask>) newValue;
+            TreeItem<Task> selectedItem = (TreeItem<Task>) newValue;
             if (selectedItem != null) {
                 taskName.setText(selectedItem.getValue().getName());
                 position.setText(selectedItem.getValue().getPosition());
@@ -334,7 +329,7 @@ public class GUIController implements Initializable {
 //        spH.setResizableWithParent( ap1, false );
 //        spH.setResizableWithParent( taskTreeView, false );
     }
-    public GUIController(){}
+    public MainGUIController(){}
     public void sendMainAppFrame(JFrame w){
         this.window = w;
     }

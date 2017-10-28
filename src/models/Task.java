@@ -1,26 +1,24 @@
-package beans;
+package models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class DiagramTask implements Serializable{
+public class Task implements Serializable{
 
     private String name;
     private String position;
     private String plan;
-    private DiagramTask parent;
-    private List<DiagramTask> subtasks;
-    private String usabilityLoggingDescription;
-    private HashMap<String, String> references;
+    private Task parent;
+    private List<Task> subtasks;
+    private LoggingElement loggingElement;
 
-    public DiagramTask(String name, String position, String plan) {
+    public Task(String name, String position, String plan) {
         this.name = name;
         this.position = position;
         this.plan = plan;
         this.subtasks = new ArrayList<>();
-        this.references = new HashMap<>();
+        this.loggingElement = new LoggingElement();
     }
 
     public String getName() {
@@ -44,32 +42,31 @@ public class DiagramTask implements Serializable{
         this.plan = plan;
     }
 
-    public DiagramTask getParent() {
+    public Task getParent() {
         return parent;
     }
-    public void setParent(DiagramTask parent) {
+    public void setParent(Task parent) {
         this.parent = parent;
     }
 
-    public String getUsabilityLoggingDescription(){
-        return this.usabilityLoggingDescription;
+    public LoggingElement getLoggingElement() {
+        return loggingElement;
     }
-    public void setUsabilityLoggingDescription(String usabilityLoggingDescription){
-        this.usabilityLoggingDescription = usabilityLoggingDescription;
+    public void setLoggingReference(String tracker, String text) {
+        this.loggingElement.addRefernce(tracker, text);
+    }
+    public void setLoggingElementDescription(String description){
+        this.loggingElement.setDescription(description);
     }
 
-    public HashMap<String, String> getReferences() {
-        return references;
-    }
-
-    public List<DiagramTask> getSubtasks() {
+    public List<Task> getSubtasks() {
         return this.subtasks;
     }
     public boolean hasSubtasks() {
         if(this.subtasks.size()==0)return false;
         return true;
     }
-    public void addSubtask(DiagramTask subTask){
+    public void addSubtask(Task subTask){
         this.subtasks.add(subTask);
     }
 
@@ -85,7 +82,7 @@ public class DiagramTask implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DiagramTask that = (DiagramTask) o;
+        Task that = (Task) o;
 
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (position != null ? !position.equals(that.position) : that.position != null) return false;
@@ -93,13 +90,6 @@ public class DiagramTask implements Serializable{
         if (parent != null ? !parent.equals(that.parent) : that.parent != null) return false;
         return subtasks != null ? subtasks.equals(that.subtasks) : that.subtasks == null;
     }
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (position != null ? position.hashCode() : 0);
-        result = 31 * result + (plan != null ? plan.hashCode() : 0);
-        result = 31 * result + (parent != null ? parent.hashCode() : 0);
-        result = 31 * result + (subtasks != null ? subtasks.hashCode() : 0);
-        return result;
-    }
+
+
 }

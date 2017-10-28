@@ -1,6 +1,6 @@
 package main;
 
-import controllers.GUIController;
+import controllers.MainGUIController;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +24,7 @@ public class MainSwing {
     //GUI Swing initialization
     private static void initAndShowGUI() {
         // This method is invoked on the EDT thread
-        JFrame frame = new JFrame("Swing (JavaFX)");
+        JFrame frame = new JFrame("Task Annotation for Usability Logging");
         final JFXPanel fxPanel = new JFXPanel();
         frame.add(fxPanel);
         frame.setSize(1000, 700);
@@ -53,10 +53,9 @@ public class MainSwing {
         FXMLLoader loader = new FXMLLoader();
         loader.setClassLoader(MainSwing.class.getClassLoader());
         loader.setLocation(MainSwing.class.getResource( "/fxml/MainGUIFXML.fxml" ));
-        loader.getController();
         try {
             rootLayout = loader.load();
-            GUIController sc = loader.<GUIController>getController();
+            MainGUIController sc = loader.<MainGUIController>getController();
             sc.sendMainAppFrame(frame);
         } catch (IOException e) {
             e.printStackTrace();

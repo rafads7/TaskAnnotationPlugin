@@ -1,9 +1,8 @@
 package utils;
 
-import beans.DiagramTask;
-import beans.TaskGraph;
+import models.Task;
+import models.Graph;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
@@ -116,8 +115,8 @@ public class Utils {
                 ".build());\n";
     }
 
-    private void printGraph(TaskGraph graph){
-        for(DiagramTask t: graph.getTasks().values()){
+    private void printGraph(Graph graph){
+        for(Task t: graph.getTasks().values()){
             System.out.println(t.toString());
         }
     }
