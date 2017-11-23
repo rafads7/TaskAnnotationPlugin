@@ -39,8 +39,8 @@ public class MainGUIController implements Initializable {
     public Button loggingUsability;
 
     private Graph graph = new Graph();
-//    private LoggingUsabilityApplication loggingApplication = new LoggingUsabilityApplication();
     private JFrame window;
+
     private final String NO_PARENT = "no_parent";
     private final String NO_PREVIOUS_SIBLING = "no_previous_sibling";
     private final String NO_ROOT = "no_root";
@@ -50,9 +50,9 @@ public class MainGUIController implements Initializable {
     public void confirmButtonManagement(ActionEvent actionEvent) {
         if(correctInputData()){
             if (confirm.getText().equals(SAVE)) {
-                editTaskBehaviour();
+                editTask();
             } else {
-                newTaskBehaviour();
+                newTask();
             }
         }else{
             utils.Utils.showWarningMessage( "Error: 'Position' field must be filled with numbers. In order to indicate different levels, use dots (.): \"1.2.1.1\"" );
@@ -77,23 +77,14 @@ public class MainGUIController implements Initializable {
             return true;
         }
     }
-    private void newTaskBehaviour() {
+    private void newTask() {
         if (taskName.getText().equals("") || taskName.getText() == null || position.getText().equals("") || position.getText() == null) {
             utils.Utils.showWarningMessage("Warning: Sorry, you must indicate a Task Name and Position in order to create or edit one.");
         } else {
-            String addingResult = addTaskToDiagram();
-            if (addingResult.equals(NO_PARENT)) {
-                utils.Utils.showWarningMessage("Error: there is no possible parent existing for this position. First create the parent, and later add this one.");
-            } else if (addingResult.equals(NO_PREVIOUS_SIBLING)) {
-                utils.Utils.showWarningMessage("Error: The position you indicated requires a previous task under the same parent.");
-            } else if (addingResult.equals(NO_ROOT)) {
-                utils.Utils.showWarningMessage("Error: You should first create a root (position: 0).");
-            } else {
-                updateControlGUI();
-            }
+            addTaskToDiagram();
         }
     }
-    private void editTaskBehaviour() {
+    private void editTask() {
         Task t = graph.getTaskByPosition(position.getText());
         t.setName(taskName.getText());
         t.setPlan(plan.getText());
@@ -127,12 +118,22 @@ public class MainGUIController implements Initializable {
         } );
 
     }
-    private String addTaskToDiagram() {
-        return this.graph.addNewTaskToDiagram(this.taskName, this.position, this.plan);
+    private void addTaskToDiagram() {
+        String addingResult = this.graph.addTask(this.taskName.getText(), this.position.getText(), this.plan.getText());
+
+        if (addingResult.equals(NO_PARENT)) {
+            utils.Utils.showWarningMessage("Error: there is no possible parent existing for this position. First create the parent, and later add this one.");
+        } else if (addingResult.equals(NO_PREVIOUS_SIBLING)) {
+            utils.Utils.showWarningMessage("Error: The position you indicated requires a previous task under the same parent.");
+        } else if (addingResult.equals(NO_ROOT)) {
+            utils.Utils.showWarningMessage("Error: You should first create a root (position: 0).");
+        } else {
+            updateControlGUI();
+        }
     }
 
     //GUI
-    public void updateControlGUI() {
+    private void updateControlGUI() {
         graphDiagramManagement();
         updateTaskTreeView();
         taskName.clear();

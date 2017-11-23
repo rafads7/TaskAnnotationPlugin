@@ -31,8 +31,8 @@ public class Graph implements Serializable{
     }
 
     //Task Creation
-    public String addNewTaskToDiagram(TextField taskName, TextField position, TextArea plan) {
-        Task task = new Task(taskName.getText(), position.getText(), plan.getText());
+    public String addTask(String taskName, String position, String plan) {
+        Task task = new Task(taskName, position, plan);
         if (taskAlreadyExists(task.getPosition())) {
             if(utils.Utils.showWarningCheck("Creation",  task.toString())){
                 createNewTaskAndUpdateExistingTasks(task);

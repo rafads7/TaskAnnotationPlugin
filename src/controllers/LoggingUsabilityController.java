@@ -37,6 +37,8 @@ public class LoggingUsabilityController implements Initializable{
         this.task = task;
         this.window = window;
         this.mainAppWindow = mainAppWindow;
+//        this.mainAppWindow.setFocusable(false);
+//        this.mainAppWindow.setEnabled(false);
 
         if(task.getLoggingElement().getDescription() != null){
             usabilityTextArea.setText(task.getLoggingElement().getDescription());
@@ -89,6 +91,9 @@ public class LoggingUsabilityController implements Initializable{
                     task.setLoggingReference("UserTiming", userTimingReference.getText());
                 }
                 window.close();
+//                mainAppWindow.setFocusable(true);
+//                mainAppWindow.setEnabled(true);
+//                mainAppWindow.toFront();
             }
         } );
     }
