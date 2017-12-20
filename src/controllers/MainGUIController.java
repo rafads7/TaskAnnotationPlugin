@@ -40,6 +40,7 @@ public class MainGUIController implements Initializable {
 
     private Graph graph = new Graph();
     private JFrame window;
+    private TreeItem<Task> selectedItem;
 
     private final String NO_PARENT = "no_parent";
     private final String NO_PREVIOUS_SIBLING = "no_previous_sibling";
@@ -85,13 +86,15 @@ public class MainGUIController implements Initializable {
         }
     }
     private void editTask() {
-        Task t = graph.getTaskByPosition(position.getText());
-        t.setName(taskName.getText());
-        t.setPlan(plan.getText());
+//        Task t = graph.getTaskByPosition(position.getText());
+//        t.setName(taskName.getText());
+//        t.setPlan(plan.getText());
+//        t.setPosition(position.getText());
+        graph.editTaskPosition(selectedItem.getValue(), taskName.getText(), plan.getText(), position.getText());
         delete.setDisable(true);
         loggingUsability.setDisable(true);
         confirm.setText("New");
-        position.setDisable(false);
+//        position.setDisable(false);
         updateControlGUI();
     }
     private void deleteButtonManagement(TreeItem<Task> selectedItem) {
@@ -103,7 +106,7 @@ public class MainGUIController implements Initializable {
                 delete.setDisable(true);
                 loggingUsability.setDisable(true);
                 confirm.setText("New");
-                position.setDisable(false);
+//                position.setDisable(false);
                 updateControlGUI();
             }
         });
@@ -307,17 +310,16 @@ public class MainGUIController implements Initializable {
     }
     private void setItemBehaviour() {
         taskTreeView.getSelectionModel().selectedItemProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
-            TreeItem<Task> selectedItem = (TreeItem<Task>) newValue;
+            selectedItem = (TreeItem<Task>) newValue;
             if (selectedItem != null) {
                 taskName.setText(selectedItem.getValue().getName());
                 position.setText(selectedItem.getValue().getPosition());
-                position.setDisable(true);
+//                position.setDisable(true);
                 plan.setText(selectedItem.getValue().getPlan());
                 deleteButtonManagement(selectedItem);
                 loggingButtonManagement(selectedItem);
                 confirm.setText(SAVE);
             }
-
         });
     }
 

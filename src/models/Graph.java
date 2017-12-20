@@ -4,7 +4,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Graph implements Serializable{
 
@@ -62,30 +64,35 @@ public class Graph implements Serializable{
         if(newTask.getPosition().equals("0")){
             utils.Utils.showWarningMessage("Error: you cannot create a new root.");
         }else{
-            Task old = this.tasks.get(newTask.getPosition());
-            int newTaskPosLastLevel = Integer.valueOf(newTask.getPosition().substring(newTask.getPosition().length()-1));
-            int currentTaskPosLastLevel;
-
-            for(Task t : old.getParent().getSubtasks()){
-                currentTaskPosLastLevel = Integer.valueOf(t.getPosition().substring(t.getPosition().length()-1));
-                if(newTaskPosLastLevel <= currentTaskPosLastLevel){
-                    if(t.getPosition().length() == 1){
-                        t.setPosition(String.valueOf(Integer.valueOf(t.getPosition()) + 1));
-                    }else{
-                        t.setPosition(t.getParent().getPosition() + "." + String.valueOf(currentTaskPosLastLevel+1));
-                    }
-                    if(t.hasSubtasks()){
-                        updateExistingSubtasks(t);
-                    }
-                }
-            }
-            old.getParent().getSubtasks().add(old.getParent().getSubtasks().indexOf(old), newTask);
-            newTask.setParent(old.getParent());
-            updateGraph(old.getParent());
+            addTaskInAPositionWithAlreadyAnotherTask(newTask);
         }
     }
+    private void addTaskInAPositionWithAlreadyAnotherTask(Task newTask){
+        Task oldTaskInNewPosition = this.tasks.get(newTask.getPosition());
+        Task newParent = oldTaskInNewPosition.getParent();//gets the Parent of the oldTask in the new position
+
+        int newPosLastLevel = Integer.valueOf(newTask.getPosition().substring(newTask.getPosition().length()-1));
+        int currentTaskPosLastLevel;
+
+        for(Task t : newParent.getSubtasks()){
+            currentTaskPosLastLevel = Integer.valueOf(t.getPosition().substring(t.getPosition().length()-1));
+            if(newPosLastLevel <= currentTaskPosLastLevel){
+                if(t.getPosition().length() == 1){
+                    t.setPosition(String.valueOf(Integer.valueOf(t.getPosition()) + 1));
+                }else{
+                    t.setPosition(t.getParent().getPosition() + "." + String.valueOf(currentTaskPosLastLevel+1));
+                }
+                if(t.hasSubtasks()){
+                    updateExistingSubtasks(t);
+                }
+            }
+        }
+        newParent.getSubtasks().add(newParent.getSubtasks().indexOf(oldTaskInNewPosition), newTask);
+        newTask.setParent(newParent);
+        updateGraph(newParent);
+    }
     private void updateExistingSubtasks(Task parent){
-        String aux1, aux2, aux3;
+        String aux1;
         int parentPosLength = parent.getPosition().length();
         for(Task t: parent.getSubtasks()){
             aux1 = t.getPosition().substring(parentPosLength);
@@ -96,11 +103,19 @@ public class Graph implements Serializable{
         }
     }
     private void updateGraph(Task parent){
+        List<String> toRemove = new ArrayList<>();
         for(Task t: parent.getSubtasks()){
             this.tasks.put(t.getPosition(), t);
             if(t.hasSubtasks()){
                 updateGraph(t);
             }
+        }for(String pos : tasks.keySet()){
+            if(!pos.equals(tasks.get(pos).getPosition())){
+                toRemove.add(pos);
+            }
+        }
+        for(String p : toRemove){
+            tasks.remove(p);
         }
     }
 
@@ -156,7 +171,7 @@ public class Graph implements Serializable{
             if (task.hasSubtasks()) {
                 deleteSubtasks(task);
             }
-            moveFollowingTasks(task);
+            moveSubsequentTasks(task);
         }
     }
     private void deleteSubtasks(Task task) {
@@ -165,53 +180,44 @@ public class Graph implements Serializable{
                 deleteSubtasks(subT);
             }
             this.tasks.remove(subT.getPosition());
-
         }
     }
 
     //Graph Update
-    private void moveFollowingTasks(Task removedTask) {
+    private void moveSubsequentTasks(Task removedTask) {
         Task parent = removedTask.getParent();
         parent.getSubtasks().remove(removedTask);
-        String currentTaskPos, aux1, aux2;
-        int aux3, parentPosLenghtToCompare = parent.getPosition().length();
+        String currentTaskPos, aux1;
+
         for (Task t : parent.getSubtasks()) {
             if (isNotAPreviousTask(removedTask.getPosition(), t.getPosition())) {
                 currentTaskPos = t.getPosition();
                 if(currentTaskPos.length() == 1){
-                    aux3 = Integer.valueOf(currentTaskPos.substring(0)) - 1;
-                    t.setPosition(String.valueOf(aux3));
+                    t.setPosition(String.valueOf(Integer.valueOf(currentTaskPos) - 1));
                 }else{
-                    aux1 = currentTaskPos.substring(0, parentPosLenghtToCompare + 1);
-                    aux2 = currentTaskPos.substring(parentPosLenghtToCompare + 1);
-                    aux3 = Integer.valueOf(aux2) - 1;
-                    t.setPosition((aux1 + String.valueOf(aux3)));
+                    aux1 = currentTaskPos.substring(currentTaskPos.length()-1);
+                    t.setPosition(parent.getPosition() + "." + String.valueOf(Integer.valueOf(aux1)-1));
                 }
                 this.tasks.remove(currentTaskPos);
                 this.tasks.put(t.getPosition(), t);
                 if(t.hasSubtasks()){
-                    moveFollowingSubTasks(t);
+                    moveSubsequentSubTasks(t);
                 }
             }
         }
     }
-    private void moveFollowingSubTasks(Task parent) {
-        String currentTaskPos, aux1, aux2, aux4;
-        int aux3, parentPosLenghtToCompare = parent.getPosition().length();
+    private void moveSubsequentSubTasks(Task parent) {
+        String currentTaskPos, aux1;
 
         for (Task t : parent.getSubtasks()) {
             currentTaskPos = t.getPosition();
-
-            aux1 = currentTaskPos.substring(0, parentPosLenghtToCompare-1);
-            aux2 = currentTaskPos.substring(parentPosLenghtToCompare - 1, parentPosLenghtToCompare);
-            aux3 = Integer.valueOf(aux2) - 1;
-            aux4 = currentTaskPos.substring(parentPosLenghtToCompare);
-            t.setPosition((aux1 + String.valueOf(aux3) + aux4));
+            aux1 = currentTaskPos.substring(currentTaskPos.length()-1);
+            t.setPosition(parent.getPosition() + "." + aux1);
 
             this.tasks.remove(currentTaskPos);
             this.tasks.put(t.getPosition(), t);
             if(t.hasSubtasks()){
-                moveFollowingSubTasks(t);
+                moveSubsequentSubTasks(t);
             }
         }
     }
@@ -221,4 +227,190 @@ public class Graph implements Serializable{
         if (remove < check) return true;
         return false;
     }
+
+    public void editTaskPosition(Task selectedTask, String newName, String newPlan, String newPos) {
+        String oldPos = selectedTask.getPosition();
+        if(oldPos.length() == 1 && Integer.valueOf(oldPos) == 0) {
+            utils.Utils.showWarningMessage("You cannot move Root task.");
+        }else if(newPos.length() == 1 && Integer.valueOf(newPos) == 0){
+                utils.Utils.showWarningMessage("You cannot move to Root.");
+        }else{
+            editTaskNameAndPlan(getTaskByPosition(oldPos), newName, newPlan);
+
+            if(!oldPos.equals(newPos)){
+                if(moveTaskToSubsequentPosition(oldPos, newPos)){ //-->
+                    if(taskAlreadyExists(newPos)){
+                        if(haveSameParent(oldPos, newPos)){
+                            deleteTask(selectedTask);
+                            moveTaskToEditToNewPositions(selectedTask,newPos);
+                        }else{
+                            moveTaskToEditToNewPositions(selectedTask, newPos);
+                            deleteTask(selectedTask);
+                        }
+                    }else{
+                        if(newSubsequentPositionCanExistInDiagram(oldPos, newPos)){
+                            moveTaskToEditToNewPositions(selectedTask, newPos);
+                            deleteTask(selectedTask);
+                        }
+                    }
+                }else{ //<--
+                    if(taskAlreadyExists(newPos)){
+                        moveSubsequentTasks(selectedTask);
+                        selectedTask.setPosition(newPos);
+                        if(selectedTask.hasSubtasks()){
+                            setSubtasksNewPositions(selectedTask);
+                        }
+                        addTaskInAPositionWithAlreadyAnotherTask(selectedTask);
+                    }else{
+                        //moure
+                        if(newPreviousPositionCanExistInDiagram(newPos)){
+                            tasks.remove(oldPos);
+                            synchWithParentAndMoveSubsequentTasks(selectedTask, newPos);
+                            tasks.put(selectedTask.getPosition(), selectedTask);
+
+                            if(selectedTask.hasSubtasks()){
+                                moveSubsequentSubTasks(selectedTask);
+                            }
+                        }else{
+                            utils.Utils.showWarningMessage("Sorry, there is no parent position for the new position.");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void moveTaskToEditToNewPositions(Task toMove, String newPos) {
+        //toMove.setPosition(newPos);
+        addTask(toMove.getName(), newPos, toMove.getPlan());
+
+        String newPosition;
+        if(toMove.hasSubtasks()){
+            for(Task t : toMove.getSubtasks()){
+                newPosition = newPos + "." + t.getPosition().substring(t.getPosition().length()-1);
+                moveTaskToEditToNewPositions(t, newPosition);
+            }
+        }
+    }
+    
+
+    private void setSubtasksNewPositions(Task parent) {
+
+        String auxParent = parent.getPosition(), auxSubTask;
+        for(Task t : parent.getSubtasks()){
+            auxSubTask = t.getPosition().substring(t.getPosition().length()-1);
+            t.setPosition(auxParent + "." + auxSubTask);
+
+            if(t.hasSubtasks()){
+                setSubtasksNewPositions(t);
+            }
+        }
+    }
+
+    private void editTaskNameAndPlan(Task toEdit, String newName, String newPlan){
+        toEdit.setName(newName);
+        toEdit.setPlan(newPlan);
+    }
+
+    private boolean moveTaskToSubsequentPosition(String oldP, String newP){
+        String[] oPos = oldP.split("\\.");
+        String[] nPos = newP.split("\\.");
+
+        int limit;
+        if(oldP.length() < newP.length()){
+            limit = oPos.length;
+        }else{
+            limit = nPos.length;
+        }
+
+        for(int i=0; i<limit; i++){
+            if(Integer.valueOf(oPos[i]) < Integer.valueOf(nPos[i])){
+                return true;
+            }
+            else if(Integer.valueOf(oPos[i]) > Integer.valueOf(nPos[i])){
+                return false;
+            }
+        }
+        if(limit == oPos.length){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean newPreviousPositionCanExistInDiagram(String newPos){
+
+        String parentOfNewPos = newPos.substring(0, newPos.length() - 2);
+        if (tasks.containsKey(parentOfNewPos)) { //if the new position has an existing parent where to belong
+            int subTasksSize = tasks.get(parentOfNewPos).getSubtasks().size();
+            if (subTasksSize == (Integer.valueOf(newPos.substring(newPos.length() - 1)) - 1)) { //if the new position is just after the last sibling
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    private boolean newSubsequentPositionCanExistInDiagram(String oldPos, String newPos){
+        if(haveSameParent(oldPos,newPos)){
+            utils.Utils.showWarningMessage("Error: You cannot move the task in position " + oldPos + " to position " + newPos +
+                    " because then the previous position to the new one would be empty.");
+            return false;
+        }else{
+            String newParentPosition;
+            if(newPos.length() == 1){
+                newParentPosition = "0";
+            }else{
+                newParentPosition = newPos.substring(0, newPos.length() - 2);
+            }
+
+            if(taskAlreadyExists(newParentPosition)){
+                int newPosAux = Integer.valueOf(newPos.substring(newPos.length()-1));
+                if(tasks.get(newParentPosition).getSubtasks().size() == (newPosAux-1)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        }
+    }
+
+    private boolean haveSameParent(String oldPos, String newPos) {
+        String parentOfOldPos;
+        String parentOfNewPos;
+
+        if(oldPos.length() == 1 && newPos.length() == 1){
+            return true;
+        }else if(oldPos.length() == 1 || newPos.length() == 1){
+            return false;
+        }else {
+            parentOfOldPos = oldPos.substring(0, oldPos.length() - 2);
+            parentOfNewPos = newPos.substring(0, newPos.length() - 2);
+
+            if(parentOfNewPos.equals(parentOfOldPos)){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
+
+    private void synchWithParentAndMoveSubsequentTasks(Task selectedTask, String newPos){
+        moveSubsequentTasks(selectedTask);
+        selectedTask.setPosition(newPos);
+
+        if(selectedTask.getPosition().length() == 1){
+            selectedTask.setParent(tasks.get("0"));
+            tasks.get("0").addSubtask(selectedTask);
+        }else{
+            selectedTask.setParent(tasks.get(selectedTask.getPosition().substring(0, selectedTask.getPosition().length()-2)));
+            selectedTask.getParent().addSubtask(selectedTask);
+        }
+    }
+
+
 }
